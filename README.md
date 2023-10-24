@@ -130,7 +130,7 @@ Our solution is encapsulated as a RESTful API, developed using the FastAPI frame
 
 #### **Key Technical Highlights**:
 
-- **LLaMa-2 13B**: Used for knowledge distilation, generative data augmentation
+- **LLaMa-2 13B**: Used for knowledge distillation, generative data augmentation
 - **SentenceTransformers**: Used for converting text data into meaningful embeddings.
 - **FAISS**: Enables efficient similarity search for intent detection.
 - **FastAPI**: Powers the backend, ensuring a responsive and scalable solution.
@@ -307,9 +307,9 @@ This is the main FastAPI application file, encapsulating the backend logic for i
 This notebook showcases the initial approach to intent recognition using both TF-IDF and Sentence Transformers. It contains an evaluation of both these methods on a dataset to compare their performance in recognizing intents based on semantic meaning.
 
 ### 6. **`post_evaluation.py`**:
-A Python script dedicated to evaluating the final performance of the intent recognition system (build with Sentence Transformer + FAISS) post deployement. It sends each utterance from the `utterances.json` file to the `match_intent` endpoint, captures the returned intent (predicted intent), and evaluates the system's accuracy by comparing the predicted intents to the true intents.
+A Python script dedicated to evaluating the final performance of the intent recognition system (build with Sentence Transformer + FAISS) post-deployment. It sends each utterance from the `utterances.json` file to the `match_intent` endpoint, captures the returned intent (predicted intent), and evaluates the system's accuracy by comparing the predicted intents to the true intents.
 
-* **Note** requirement.txt contains all the requirements for running the application (**app.py**) using standard uvicorn command and python scripts(`data_injector.py` and `post_evaluation.py` and notebook and `semantic_search_modeling.ipynb`) which is enough for the assignment. To reproduce the notebooks which performs data generation using LLaMa-2(`data_generation.ipynb`) one have to run cell-by-cell to install dependencies on the go.  
+* **Note** requirement.txt contains all the requirements for running the application (**app.py**) using standard uvicorn command and python scripts(`data_injector.py` and `post_evaluation.py` and notebook and `semantic_search_modeling.ipynb`) which is enough for the assignment. To reproduce the notebooks which perform data generation using LLaMa-2(`data_generation.ipynb`) one have to run cell-by-cell to install dependencies on the go.  
 ---
 
 ## **Testing the Application**
@@ -318,14 +318,14 @@ The performance of our Intent Retrieval application can be gauged both before de
 
 #### **Pre-Deployment Testing:**
 
-1. **Semantic Search Notebook (`Semantic_search.ipynb`):** 
+1. **Semantic Search Notebook (`semantic_search_modeling.ipynb`):** 
    
-   Before deploying your model, it's essential to ensure its accuracy and reliability. The `Semantic_search.ipynb` notebook is specifically designed to help you evaluate the potential performance of your intent recognition system.
+   Before deploying your model, it's essential to ensure its accuracy and reliability. The `semantic_search_modeling.ipynb` notebook is specifically designed to help you evaluate the potential performance of your intent recognition system.
 
    - **TF-IDF and Sentence Transformers:** This notebook contains the implementation and evaluation of two primary semantic search methods: TF-IDF and Sentence Transformers. 
    
    - **Steps:** To test the model's performance:
-     - a. Navigate to the location of `Semantic_search.ipynb`.
+     - a. Navigate to the location of `Semantic_search_modeling.ipynb`.
      - b. Open the notebook and run all the cells sequentially.
      - c. Observe the evaluation metrics displayed for both methods to understand how each might perform in a real-world scenario. These metrics will provide an initial insight into the model's accuracy, precision, recall, etc.
 
@@ -351,7 +351,7 @@ The performance of our Intent Retrieval application can be gauged both before de
 
 Following the above steps for both pre-deployment and post-deployment testing ensures a comprehensive evaluation of the application, guaranteeing robust and reliable performance in live scenarios.
 
-Below table shows the intent retrieval accuraries of TF-IDF, sentence-transformer and sentence-transformer + FIASS models
+The below table shows the intent retrieval accuracies of TF-IDF, sentence-transformer, and sentence-transformer + FIASS models
 
 | Method                       | Correct Predictions | Incorrect Predictions | Accuracy  |
 |------------------------------|---------------------|-----------------------|-----------|
