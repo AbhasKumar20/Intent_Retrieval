@@ -271,9 +271,7 @@ curl -X 'POST' \
   'http://127.0.0.1:8000/match_intent' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
-  -d '{
-  "utterance": "I'd like to know if I have confirmed seat reservation in flight PNR123"
-}'
+  -d "{\"utterance\": \"I'd like to know if I have confirmed seat reservation in flight PNR123\"}"
 ```
 
 **Response:**
