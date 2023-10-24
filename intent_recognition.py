@@ -4,18 +4,23 @@ from sentence_transformers import SentenceTransformer, util
 import re
 import string
 import nltk
+import faiss
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+import numpy as np
 
 app = FastAPI()
 
-DB_SIZE_LIMIT = 1000  # Example limit
+DB_SIZE_LIMIT = 1000  
 
 intents_db = {}
+intent_mapping = []
 
 st_model = SentenceTransformer('paraphrase-distilroberta-base-v1')
-st_corpus_embeddings = None  # This will store our intent embeddings
+dimension = st_model.get_sentence_embedding_dimension()
+
+faiss_index = faiss.IndexFlatL2(dimension)
 
 nltk.download('stopwords')
 nltk.download('wordnet')
@@ -51,21 +56,18 @@ def preprocess_text(text):
 
 def build_corpus_and_mapping():
     corpus = []
-    intent_mapping = []
+    intent_mapping.clear()  # Clear existing mapping
     for intent_name, examples in intents_db.items():
         for example in examples:
-            corpus.append(preprocess_text(example))
+            corpus.append(example)
             intent_mapping.append(intent_name)
     return corpus, intent_mapping
-
-def update_embeddings():
-    global st_corpus_embeddings
-    corpus, _ = build_corpus_and_mapping()
-    st_corpus_embeddings = st_model.encode(corpus)
 
 
 @app.post("/add_intent")
 async def add_intent(data: Dict[str, Any]):
+
+    global faiss_index
     # Validate the input data
     name = data.get("name")
     examples = data.get("examples")
@@ -86,12 +88,17 @@ async def add_intent(data: Dict[str, Any]):
     # Update the in-memory database
     intents_db[name] = examples
 
-    update_embeddings()
+    new_embeddings = st_model.encode([preprocess_text(ex) for ex in examples])
+    faiss_index.add(np.array(new_embeddings))  # Adding new embeddings to FAISS index
+    
+    build_corpus_and_mapping()  # Update the intent_mapping list
     
     return {"state": "success"}
 
 @app.post("/delete_intent")
 async def delete_intent(data: Dict[str, Any]):
+
+    global faiss_index
     machine_name = data.get("machine_name")
 
     if not machine_name or not isinstance(machine_name, str):
@@ -102,24 +109,40 @@ async def delete_intent(data: Dict[str, Any]):
 
     del intents_db[machine_name]
 
-    update_embeddings()
+    if not intents_db:
+        # Resetting the FAISS index if intents_db is empty after deletion
+        faiss_index = faiss.IndexFlatL2(dimension)
+        _, _ = build_corpus_and_mapping()
+        return {"state": "success"}
+
+    # Rebuild the entire FAISS index without the embeddings of the deleted intent
+    corpus, _ = build_corpus_and_mapping()
+    new_corpus_embeddings = st_model.encode([preprocess_text(ex) for ex in corpus])
+    faiss_index = faiss.IndexFlatL2(dimension)
+    faiss_index.add(np.array(new_corpus_embeddings))
     
     return {"state": "success"}
 
-
 @app.post("/match_intent")
-async def get_intent(data: Dict[str, Any]):
+async def match_intent(data: Dict[str, Any]):
+
+    global faiss_index
     utterance = data.get("utterance")
-    
+
     if not utterance or not isinstance(utterance, str):
-        raise HTTPException(status_code=400, detail="Invalid or missing 'utterance' field.")
-    
-    if not intents_db or st_corpus_embeddings is None:
-        raise HTTPException(status_code=400, detail="No intents in the database")
-        
+        return {"state": "failure", "detail": "Invalid or missing 'utterance' field."}
+
+    # Check if there are intents in the database and FAISS index
+    if not intents_db or faiss_index.ntotal == 0:
+        return {"state": "failure", "detail": "No intents in the database"}
+
+    # Preprocess the utterance and compute its embedding
     utterance_embedding = st_model.encode(preprocess_text(utterance))
-    cosine_scores = util.pytorch_cos_sim(utterance_embedding, st_corpus_embeddings).flatten()
-    matched_index = cosine_scores.argmax().item()
-    _, intent_mapping = build_corpus_and_mapping()
+
+    # Search for the most similar embedding in the FAISS index
+    _, matched_indices = faiss_index.search(utterance_embedding.reshape(1, dimension), 1)
+    matched_index = matched_indices[0][0]
 
     return {"intent": intent_mapping[matched_index]}
+
+
