@@ -149,7 +149,7 @@ Follow these steps to get the intent classification system up and running on you
 ### 1. **Clone the Repository**:
 Clone the project repository to your local machine.
 ```bash
-git clone htttps://github.com/AbhasKumar20/Intent_Retrieval.git
+git clone https://github.com/AbhasKumar20/Intent_Retrieval.git
 cd Intent_Retrieval
 ```
 
