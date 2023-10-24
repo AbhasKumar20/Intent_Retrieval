@@ -311,6 +311,7 @@ This notebook showcases the initial approach to intent recognition using both TF
 ### 6. **`post_evaluation.py`**:
 A Python script dedicated to evaluating the final performance of the intent recognition system (build with Sentence Transformer + FAISS) post deployement. It sends each utterance from the `utterances.json` file to the `match_intent` endpoint, captures the returned intent (predicted intent), and evaluates the system's accuracy by comparing the predicted intents to the true intents.
 
+* **Note** requirement.txt contains all the requirements for running the application (**app.py**) using standard uvicorn command and python scripts(`data_injector.py` and `post_evaluation.py` and notebook and `semantic_search_modeling.ipynb`) which is enough for the assignment. To reproduce the notebooks which performs data generation using LLaMa-2(`data_generation.ipynb`) one have to run cell-by-cell to install dependencies on the go.  
 ---
 
 ## **Testing the Application**
