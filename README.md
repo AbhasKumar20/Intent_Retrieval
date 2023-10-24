@@ -2,7 +2,7 @@
 1. [Project Overview](##project-overview)
 2. [Setup and Installation](#setup-and-installation)
 3. [API Endpoints](#api-endpoints)
-4. [Repository Structure and files](#project-overview)
+4. [Repository Structure and files](#Repository-Structure-and-files)
 5. [Testing the Application](#testing-the-application)
 
 ---
