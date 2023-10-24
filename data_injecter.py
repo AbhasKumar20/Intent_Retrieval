@@ -2,11 +2,11 @@ import json
 import requests
 
 # Load your data from the JSON file
-with open('intents.json', 'r') as file:
+with open('./data/intents.json', 'r') as file:
     data_points = json.load(file)
 
 # Base URL for the FastAPI application
-base_url = "http://209.20.158.191:8888/add_intent"
+base_url = "http://127.0.0.1:8000/add_intent"
 
 # Loop over each data point and send a POST request
 counter = 0

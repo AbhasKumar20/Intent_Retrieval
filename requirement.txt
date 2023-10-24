@@ -1,0 +1,8 @@
+fastapi==0.104.0
+sentence-transformers==2.2.2
+re
+string
+nltk==3.8.1
+faiss-cpu==1.7.4
+numpy==1.23.5
+uvicorn==0.23.2
